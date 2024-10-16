@@ -12,6 +12,5 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // client.transfer().await;
     // client.transfer_from().await;
     // client.is_verified_transfer().await;
-
     Ok(())
 }
