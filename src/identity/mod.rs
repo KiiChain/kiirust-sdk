@@ -1,3 +1,8 @@
+//! Identity operations for the RWA SDK.
+//!
+//! This module provides functionality for registering, updating
+//! and removing identities on the chain.
+
 use cosmrs::{
     proto::{cosmos::auth::v1beta1::BaseAccount, prost::Message},
     rpc::Client,
@@ -9,6 +14,15 @@ use crate::RwaClient;
 pub mod request;
 
 impl RwaClient {
+    /// Fetches account information for a given account ID.
+    ///
+    /// # Arguments
+    ///
+    /// * `account_id` - The AccountId to fetch information for
+    ///
+    /// # Returns
+    ///
+    /// A Result containing an AccountInfoResponse or an error
     pub async fn fetch_account_info(
         &self,
         account_id: &AccountId,

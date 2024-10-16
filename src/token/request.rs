@@ -1,9 +1,14 @@
+use cosmrs::crypto::secp256k1::SigningKey;
+
+/// Request structure for token transfers
 pub struct TransferMessageRequest {
-    pub recipient_addr: String,
-    pub amount: u64,
-    pub owner_addr: Option<String>,
+    pub from: String,
+    pub to: String,
+    pub amount: u128,
+    pub signer: SigningKey,
 }
 
+/// Request structure for token info queries
 pub struct TokenInfoRequest {
-    pub owner_addr: String,
+    pub address: String,
 }

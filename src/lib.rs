@@ -1,3 +1,62 @@
+//! # RWA SDK
+//!
+//! The RWA (Real World Asset) SDK is a Rust library for interacting with tokenized
+//! real-world assets on Cosmos-based blockchains. It provides functionality for
+//! token operations, identity management, and compliance handling.
+//!
+//! ## Features
+//!
+//! - Token transfers and balance checks
+//! - Identity registration and management
+//! - Compliance module integration
+//! - Blockchain interaction via RPC
+//!
+//! ## Usage Example
+//!
+//! ```rust
+//! use rwa_sdk::RwaClient;
+//! use cosmrs::crypto::secp256k1::SigningKey;
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     // Initialize the client
+//!     let client = RwaClient::new(
+//!         "http://rpc.example.com:26657",
+//!         "my-chain-id",
+//!         "cosmos1token...",
+//!         "cosmos1identity...",
+//!         "cosmos1compliance...",
+//!     )?;
+//!
+//!     // Perform a token transfer
+//!     let signer = SigningKey::from_slice(&[/* your private key */])?;
+//!     let transfer_result = client.transfer(TransferMessageRequest {
+//!         from: "cosmos1sender...".to_string(),
+//!         to: "cosmos1recipient...".to_string(),
+//!         amount: 100,
+//!         signer,
+//!     }).await?;
+//!     println!("Transfer hash: {}", transfer_result);
+//!
+//!     // Check a balance
+//!     let balance = client.balance(TokenInfoRequest {
+//!         address: "cosmos1address...".to_string(),
+//!     }).await?;
+//!     println!("Balance: {}", balance.balance);
+//!
+//!     Ok(())
+//! }
+//! ```
+//!
+//! This example demonstrates how to initialize the `RwaClient`, perform a token
+//! transfer, and check an account balance. Error handling and proper setup of the
+//! signing key are crucial for production use.
+//!
+//! For more detailed information on each function and module, please refer to their
+//! respective documentation.
+
+use cosmrs::proto::cosmos::base::tendermint::v1beta1::AbciQueryResponse;
+use cosmrs::proto::prost::Message;
 use cosmrs::rpc::HttpClient;
 use cosmrs::{
     proto::cosmwasm::wasm::v1::MsgExecuteContract,
@@ -22,6 +81,19 @@ pub struct RwaClient {
 }
 
 impl RwaClient {
+    /// Creates a new RwaClient instance.
+    ///
+    /// # Arguments
+    ///
+    /// * `rpc_url` - The URL of the RPC endpoint
+    /// * `chain_id` - The ID of the blockchain
+    /// * `token_address` - The address of the token contract
+    /// * `identity_address` - The address of the identity contract
+    /// * `compliance_address` - The address of the compliance contract
+    ///
+    /// # Returns
+    ///
+    /// A Result containing the RwaClient instance or an error
     pub fn new(
         rpc_url: &str,
         chain_id: &str,
@@ -39,7 +111,21 @@ impl RwaClient {
             compliance_address: compliance_address.to_string(),
         })
     }
-    pub async fn execute<T: serde::Serialize>(
+
+    /// Executes a contract call that modifies the state.
+    ///
+    /// # Arguments
+    ///
+    /// * `from` - The address initiating the transaction
+    /// * `msg` - The message to be executed
+    /// * `contract_address` - The address of the contract to execute
+    /// * `funds` - Any funds to be sent with the transaction
+    /// * `signer` - The signing key for the transaction
+    ///
+    /// # Returns
+    ///
+    /// A Result containing the transaction hash as a String or an error
+    async fn execute<T: serde::Serialize>(
         &self,
         from: &str,
         msg: &T,
@@ -85,5 +171,39 @@ impl RwaClient {
         let response = self.rpc_client.broadcast_tx_commit(tx_bytes).await?;
 
         Ok(response.hash.to_string())
+    }
+
+    /// Queries a contract without modifying the state.
+    ///
+    /// # Arguments
+    ///
+    /// * `contract_address` - The address of the contract to query
+    /// * `msg` - The query message
+    ///
+    /// # Returns
+    ///
+    /// A Result containing the deserialized response or an error
+    async fn query<T: serde::de::DeserializeOwned>(
+        &self,
+        contract_address: &str,
+        msg: &impl serde::Serialize,
+    ) -> Result<T, Box<dyn std::error::Error>> {
+        let query_msg = cosmwasm_std::to_json_binary(&msg)?;
+        let query_data = cosmrs::proto::cosmwasm::wasm::v1::QuerySmartContractStateRequest {
+            address: contract_address.to_string(),
+            query_data: query_msg.into(),
+        };
+        let query_data = query_data.encode_to_vec();
+
+        let path = "/cosmwasm.wasm.v1.Query/SmartContractState";
+
+        let response = self
+            .rpc_client
+            .abci_query(Some(path.to_string()), query_data, None, false)
+            .await?;
+
+        let abci_response = AbciQueryResponse::decode(response.value.as_slice())?;
+        let result: T = cosmwasm_std::from_json(&abci_response.value)?;
+        Ok(result)
     }
 }
