@@ -1,8 +1,8 @@
 use cosmrs::rpc::{HttpClient, Url};
 
-pub mod coin;
 pub mod compliance;
 pub mod identity;
+pub mod token;
 
 #[derive(Debug, Clone)]
 pub struct RwaClient {
