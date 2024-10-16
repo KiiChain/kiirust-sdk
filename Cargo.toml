@@ -8,3 +8,7 @@ cosmrs = { version = "0.20.0", features = ["rpc", "cosmwasm"] }
 cosmwasm-std = "2.0.2"
 cw20 = "2.0.0"
 serde = { version = "1.0.188", default-features = false, features = ["derive"] }
+
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full"] }
