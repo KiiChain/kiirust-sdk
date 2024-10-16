@@ -1,3 +1,5 @@
+use cosmrs::proto::cosmos::base::tendermint::v1beta1::AbciQueryResponse;
+use cosmrs::proto::prost::Message;
 use cosmrs::rpc::HttpClient;
 use cosmrs::{
     proto::cosmwasm::wasm::v1::MsgExecuteContract,
@@ -39,7 +41,7 @@ impl RwaClient {
             compliance_address: compliance_address.to_string(),
         })
     }
-    pub async fn execute<T: serde::Serialize>(
+    async fn execute<T: serde::Serialize>(
         &self,
         from: &str,
         msg: &T,
@@ -85,5 +87,29 @@ impl RwaClient {
         let response = self.rpc_client.broadcast_tx_commit(tx_bytes).await?;
 
         Ok(response.hash.to_string())
+    }
+
+    async fn query<T: serde::de::DeserializeOwned>(
+        &self,
+        contract_address: &str,
+        msg: &impl serde::Serialize,
+    ) -> Result<T, Box<dyn std::error::Error>> {
+        let query_msg = cosmwasm_std::to_json_binary(&msg)?;
+        let query_data = cosmrs::proto::cosmwasm::wasm::v1::QuerySmartContractStateRequest {
+            address: contract_address.to_string(),
+            query_data: query_msg.into(),
+        };
+        let query_data = query_data.encode_to_vec();
+
+        let path = "/cosmwasm.wasm.v1.Query/SmartContractState";
+
+        let response = self
+            .rpc_client
+            .abci_query(Some(path.to_string()), query_data, None, false)
+            .await?;
+
+        let abci_response = AbciQueryResponse::decode(response.value.as_slice())?;
+        let result: T = cosmwasm_std::from_json(&abci_response.value)?;
+        Ok(result)
     }
 }
