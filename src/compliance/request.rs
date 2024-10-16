@@ -1,4 +1,7 @@
+use cosmrs::crypto::secp256k1::SigningKey;
+
 pub struct ComplianceModuleRequest {
-    pub owner_addr: String,
+    pub from: String,
     pub module_addr: String,
+    pub signer: SigningKey,
 }
