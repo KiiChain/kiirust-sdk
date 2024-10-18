@@ -372,6 +372,7 @@ dependencies = [
  "tendermint",
  "tendermint-rpc",
  "thiserror",
+ "tokio",
 ]
 
 [[package]]
