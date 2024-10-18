@@ -55,9 +55,11 @@
 //! For more detailed information on each function and module, please refer to their
 //! respective documentation.
 
+use cosmrs::proto::cosmos::auth::v1beta1::BaseAccount;
 use cosmrs::proto::cosmos::base::tendermint::v1beta1::AbciQueryResponse;
 use cosmrs::proto::prost::Message;
 use cosmrs::rpc::HttpClient;
+use cosmrs::Any;
 use cosmrs::{
     proto::cosmwasm::wasm::v1::MsgExecuteContract,
     rpc::Client,
@@ -78,6 +80,11 @@ pub struct RwaClient {
     token_address: String,
     identity_address: String,
     compliance_address: String,
+}
+
+struct AccountInfoResponse {
+    pub account_number: u64,
+    pub sequence: u64,
 }
 
 impl RwaClient {
@@ -205,5 +212,33 @@ impl RwaClient {
         let abci_response = AbciQueryResponse::decode(response.value.as_slice())?;
         let result: T = cosmwasm_std::from_json(&abci_response.value)?;
         Ok(result)
+    }
+
+    /// Fetches account information for a given account ID.
+    ///
+    /// # Arguments
+    ///
+    /// * `account_id` - The AccountId to fetch information for
+    ///
+    /// # Returns
+    ///
+    /// A Result containing an AccountInfoResponse or an error
+    async fn fetch_account_info(
+        &self,
+        account_id: &AccountId,
+    ) -> Result<AccountInfoResponse, Box<dyn std::error::Error>> {
+        let path = format!("/cosmos/auth/v1beta1/accounts/{}", account_id);
+        let data = self
+            .rpc_client
+            .abci_query(Some(path), Vec::new(), None, false)
+            .await?;
+
+        let any = Any::decode(data.value.as_slice())?;
+        let account = BaseAccount::decode(any.value.as_slice())?;
+
+        Ok(AccountInfoResponse {
+            account_number: account.account_number,
+            sequence: account.sequence,
+        })
     }
 }
