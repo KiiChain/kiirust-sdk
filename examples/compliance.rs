@@ -9,6 +9,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "token_address",
         "identity_address",
         "compliance_address",
+        "sei",
     )?;
 
     // Add a compliance module
@@ -16,6 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         from: "cosmos1sender...".to_string(),
         module_addr: "kyc_module_addr...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
+        gas_limit: 5000,
     };
     let add_result = client
         .add_compliance_module("KYCModule", add_module_request)
@@ -27,6 +29,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         from: "cosmos1sender...".to_string(),
         module_addr: "cosmos1module...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
+        gas_limit: 5000,
     };
     let update_result = client
         .update_compliance_module(update_module_request, false)
@@ -41,6 +44,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         from: "cosmos1sender...".to_string(),
         module_addr: "cosmos1module...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
+        gas_limit: 5000,
     };
     let remove_result = client
         .remove_compliance_module(remove_module_request)

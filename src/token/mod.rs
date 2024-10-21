@@ -33,6 +33,7 @@ impl RwaClient {
             self.token_address.clone(),
             vec![],
             &request.signer,
+            request.gas_limit,
         )
         .await
     }
@@ -62,6 +63,7 @@ impl RwaClient {
             self.token_address.clone(),
             vec![],
             &request.signer,
+            request.gas_limit,
         )
         .await
     }
