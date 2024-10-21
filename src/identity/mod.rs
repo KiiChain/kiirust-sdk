@@ -43,6 +43,7 @@ impl RwaClient {
             self.identity_address.clone(),
             vec![],
             &request.signer,
+            request.gas_limit,
         )
         .await
     }
@@ -77,6 +78,7 @@ impl RwaClient {
             self.identity_address.clone(),
             vec![],
             &request.signer,
+            request.gas_limit,
         )
         .await
     }
@@ -109,6 +111,7 @@ impl RwaClient {
             self.identity_address.clone(),
             vec![],
             &request.signer,
+            request.gas_limit,
         )
         .await
     }
@@ -143,6 +146,7 @@ impl RwaClient {
             self.identity_address.clone(),
             vec![],
             &request.signer,
+            request.gas_limit,
         )
         .await
     }
@@ -177,6 +181,7 @@ impl RwaClient {
             self.identity_address.clone(),
             vec![],
             &request.signer,
+            request.gas_limit,
         )
         .await
     }

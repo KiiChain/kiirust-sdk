@@ -26,6 +26,7 @@
 //!         "cosmos1token...",
 //!         "cosmos1identity...",
 //!         "cosmos1compliance...",
+//!         "sei"
 //!     )?;
 //!
 //!     // Perform a token transfer
@@ -59,7 +60,6 @@ use cosmrs::proto::cosmos::auth::v1beta1::BaseAccount;
 use cosmrs::proto::cosmos::base::tendermint::v1beta1::AbciQueryResponse;
 use cosmrs::proto::prost::Message;
 use cosmrs::rpc::HttpClient;
-use cosmrs::Any;
 use cosmrs::{
     proto::cosmwasm::wasm::v1::MsgExecuteContract,
     rpc::Client,
@@ -67,6 +67,8 @@ use cosmrs::{
     tx::{self, Fee, MessageExt, SignDoc, SignerInfo},
     AccountId, Coin,
 };
+use cosmrs::{Any, Gas};
+
 use std::str::FromStr;
 
 pub mod compliance;
@@ -80,6 +82,7 @@ pub struct RwaClient {
     token_address: String,
     identity_address: String,
     compliance_address: String,
+    denom: String,
 }
 
 struct AccountInfoResponse {
@@ -107,6 +110,7 @@ impl RwaClient {
         token_address: &str,
         identity_address: &str,
         compliance_address: &str,
+        denom: &str,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let rpc_client = HttpClient::new(rpc_url)?;
 
@@ -116,6 +120,7 @@ impl RwaClient {
             token_address: token_address.to_string(),
             identity_address: identity_address.to_string(),
             compliance_address: compliance_address.to_string(),
+            denom: denom.to_string(),
         })
     }
 
@@ -139,6 +144,7 @@ impl RwaClient {
         contract_address: String,
         funds: Vec<Coin>,
         signer: &cosmrs::crypto::secp256k1::SigningKey,
+        gas_limit: Gas,
     ) -> Result<String, Box<dyn std::error::Error>> {
         let execute_msg = MsgExecuteContract {
             sender: from.to_string(),
@@ -156,12 +162,16 @@ impl RwaClient {
         let sender_account_id = AccountId::from_str(from)?;
         let account_info = self.fetch_account_info(&sender_account_id).await?;
 
-        let amount = Coin {
-            amount: 68u8.into(),
-            denom: "kii".parse().unwrap(),
-        };
-        let gas = 500_000u64;
-        let fee = Fee::from_amount_and_gas(amount, gas);
+        // Calculate fee based on user-specified gas limit
+        let gas_price = self.query_gas_price().await?;
+        let fee_amount = gas_limit * gas_price;
+        let fee = Fee::from_amount_and_gas(
+            Coin {
+                amount: fee_amount.into(),
+                denom: self.denom.parse()?,
+            },
+            gas_limit,
+        );
 
         // Prepare authentication info
         let auth_info = SignerInfo::single_direct(Some(signer.public_key()), account_info.sequence)
@@ -240,5 +250,10 @@ impl RwaClient {
             account_number: account.account_number,
             sequence: account.sequence,
         })
+    }
+
+    async fn query_gas_price(&self) -> Result<u64, Box<dyn std::error::Error>> {
+        // Implement logic to query current gas price
+        todo!("Implement gas price query")
     }
 }

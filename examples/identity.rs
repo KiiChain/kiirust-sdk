@@ -16,6 +16,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "cosmos1token...",
         "cosmos1identity...",
         "cosmos1compliance...",
+        "sei",
     )?;
 
     // Add a new identity
@@ -23,6 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         from: "cosmos1sender...".to_string(),
         country: "US".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
+        gas_limit: 5000,
     };
     let add_result = client.add_identity(add_identity_request).await?;
     println!("Add identity transaction hash: {}", add_result);
@@ -33,6 +35,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         new_country: "CA".to_string(),
         identity_owner: "cosmos1owner...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
+        gas_limit: 5000,
     };
     let update_result = client.update_identity(update_identity_request).await?;
     println!("Update identity transaction hash: {}", update_result);
@@ -48,6 +51,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
         identity_owner: "cosmos1owner...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
+        gas_limit: 5000,
     };
     let add_claim_result = client.add_claim(add_claim_request).await?;
     println!("Add claim transaction hash: {}", add_claim_result);
@@ -65,6 +69,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         claim_topic: Uint128::new(1),
         identity_owner: "cosmos1owner...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
+        gas_limit: 5000,
     };
     let remove_claim_result = client.remove_claim(remove_claim_request).await?;
     println!("Remove claim transaction hash: {}", remove_claim_result);
@@ -74,6 +79,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         from: "cosmos1sender...".to_string(),
         identity_owner: "cosmos1owner...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
+        gas_limit: 5000,
     };
     let remove_result = client.remove_identity(remove_identity_request).await?;
     println!("Remove identity transaction hash: {}", remove_result);

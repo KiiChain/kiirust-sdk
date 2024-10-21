@@ -1,17 +1,16 @@
 #![cfg(feature = "integration")]
 
 use cosmrs::{crypto::secp256k1, dev, rpc, tx::AccountNumber, Coin};
-use rwa_sdk::token::request::{TokenInfoRequest, TransferMessageRequest};
-use rwa_sdk::RwaClient;
+use erc3643sdk::token::request::{TokenInfoRequest, TransferMessageRequest};
+use erc3643sdk::RwaClient;
 use std::panic::AssertUnwindSafe;
-use std::str::FromStr;
 
 // Constants
 const CHAIN_ID: &str = "rwa-test";
 const RPC_PORT: u16 = 26657;
 const ACCOUNT_NUMBER: AccountNumber = 1;
 const ACCOUNT_PREFIX: &str = "cosmos";
-const DENOM: &str = "urwa";
+const DENOM: &str = "sei";
 
 #[tokio::test]
 async fn test_token_transfer() {
@@ -26,7 +25,7 @@ async fn test_token_transfer() {
         .unwrap();
 
     let amount = Coin {
-        amount: 100u8.into(),
+        amount: 100u128.into(),
         denom: DENOM.parse().unwrap(),
     };
 
@@ -61,6 +60,7 @@ async fn test_token_transfer() {
                 "cosmos1token...",      // Replace with actual token address
                 "cosmos1identity...",   // Replace with actual identity address
                 "cosmos1compliance...", // Replace with actual compliance address
+                DENOM,
             )
             .unwrap();
 
@@ -68,8 +68,9 @@ async fn test_token_transfer() {
             let transfer_request = TransferMessageRequest {
                 from: sender_account_id.to_string(),
                 to: recipient_account_id.to_string(),
-                amount: amount.amount.u128(),
-                signer: (*sender_private_key).clone(),
+                amount: amount.amount,
+                signer: (*sender_private_key),
+                gas_limit: 5000,
             };
 
             let transfer_result = client.transfer(transfer_request).await.unwrap();
@@ -84,7 +85,7 @@ async fn test_token_transfer() {
                 address: recipient_account_id.to_string(),
             };
             let balance = client.balance(balance_request).await.unwrap();
-            assert_eq!(balance.balance, amount.amount.into());
+            assert_eq!(balance.balance.u128(), amount.amount);
 
             // Check token info
             let token_info = client.coin_info().await.unwrap();

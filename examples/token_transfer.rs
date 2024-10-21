@@ -12,6 +12,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "token_address",
         "identity_address",
         "compliance_address",
+        "sei",
     )?;
 
     let signer = SigningKey::from_slice(&[/* your private key */])?;
@@ -22,6 +23,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         to: "cosmos1recipient...".to_string(),
         amount: 100,
         signer: signer,
+        gas_limit: 5000,
     };
     let transfer_result = client.transfer(transfer_request).await?;
     println!("Transfer hash: {}", transfer_result);

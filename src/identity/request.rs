@@ -1,4 +1,4 @@
-use cosmrs::crypto::secp256k1::SigningKey;
+use cosmrs::{crypto::secp256k1::SigningKey, Gas};
 use cosmwasm_std::Uint128;
 
 use super::Claim;
@@ -8,6 +8,7 @@ pub struct AddIdentityRequest {
     pub from: String,
     pub country: String,
     pub signer: SigningKey,
+    pub gas_limit: Gas,
 }
 /// Request structure for updating an identity
 pub struct UpdateIdentityRequest {
@@ -15,6 +16,7 @@ pub struct UpdateIdentityRequest {
     pub new_country: String,
     pub identity_owner: String,
     pub signer: SigningKey,
+    pub gas_limit: Gas,
 }
 
 /// Request structure for removing an identity
@@ -22,6 +24,7 @@ pub struct RemoveIdentityRequest {
     pub from: String,
     pub identity_owner: String,
     pub signer: SigningKey,
+    pub gas_limit: Gas,
 }
 
 /// Request structure for adding a claim to user
@@ -30,6 +33,7 @@ pub struct AddClaimRequest {
     pub claim: Claim,
     pub identity_owner: String,
     pub signer: SigningKey,
+    pub gas_limit: Gas,
 }
 
 /// Request structure for removing a claim
@@ -38,6 +42,7 @@ pub struct RemoveClaimRequest {
     pub claim_topic: Uint128,
     pub identity_owner: String,
     pub signer: SigningKey,
+    pub gas_limit: Gas,
 }
 
 /// Request structure for retrieving validated claims for user
