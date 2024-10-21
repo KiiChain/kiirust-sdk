@@ -26,7 +26,9 @@
 //!         "cosmos1token...",
 //!         "cosmos1identity...",
 //!         "cosmos1compliance...",
-//!         "sei"
+//!         "sei",
+//!         "gas_price"
+//!
 //!     )?;
 //!
 //!     // Perform a token transfer
@@ -36,6 +38,7 @@
 //!         to: "cosmos1recipient...".to_string(),
 //!         amount: 100,
 //!         signer,
+//!         gas_limit
 //!     }).await?;
 //!     println!("Transfer hash: {}", transfer_result);
 //!
@@ -83,6 +86,7 @@ pub struct RwaClient {
     identity_address: String,
     compliance_address: String,
     denom: String,
+    gas_price: Gas,
 }
 
 struct AccountInfoResponse {
@@ -100,7 +104,8 @@ impl RwaClient {
     /// * `token_address` - The address of the token contract
     /// * `identity_address` - The address of the identity contract
     /// * `compliance_address` - The address of the compliance contract
-    ///
+    /// * `denom` - The unit of token
+    /// * `gas_price` - The amount willing to pay for each unit of gas
     /// # Returns
     ///
     /// A Result containing the RwaClient instance or an error
@@ -111,6 +116,7 @@ impl RwaClient {
         identity_address: &str,
         compliance_address: &str,
         denom: &str,
+        gas_price: Gas,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let rpc_client = HttpClient::new(rpc_url)?;
 
@@ -121,6 +127,7 @@ impl RwaClient {
             identity_address: identity_address.to_string(),
             compliance_address: compliance_address.to_string(),
             denom: denom.to_string(),
+            gas_price,
         })
     }
 
@@ -163,8 +170,7 @@ impl RwaClient {
         let account_info = self.fetch_account_info(&sender_account_id).await?;
 
         // Calculate fee based on user-specified gas limit
-        let gas_price = self.query_gas_price().await?;
-        let fee_amount = gas_limit * gas_price;
+        let fee_amount = gas_limit * self.gas_price;
         let fee = Fee::from_amount_and_gas(
             Coin {
                 amount: fee_amount.into(),
@@ -250,10 +256,5 @@ impl RwaClient {
             account_number: account.account_number,
             sequence: account.sequence,
         })
-    }
-
-    async fn query_gas_price(&self) -> Result<u64, Box<dyn std::error::Error>> {
-        // Implement logic to query current gas price
-        todo!("Implement gas price query")
     }
 }

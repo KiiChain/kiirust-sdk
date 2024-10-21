@@ -10,6 +10,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "identity_address",
         "compliance_address",
         "sei",
+        10,
     )?;
 
     // Add a compliance module

@@ -17,6 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "cosmos1identity...",
         "cosmos1compliance...",
         "sei",
+        10,
     )?;
 
     // Add a new identity

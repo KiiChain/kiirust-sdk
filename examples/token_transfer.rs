@@ -13,6 +13,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "identity_address",
         "compliance_address",
         "sei",
+        10,
     )?;
 
     let signer = SigningKey::from_slice(&[/* your private key */])?;
