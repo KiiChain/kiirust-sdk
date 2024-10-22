@@ -40,7 +40,7 @@
 //!         signer,
 //!         gas_limit
 //!     }).await?;
-//!     println!("Transfer hash: {}", transfer_result);
+//!     println!("Transfer hash: {}", transfer_result.hash);
 //!
 //!     // Check a balance
 //!     let balance = client.balance(TokenInfoRequest {
@@ -63,6 +63,7 @@ use cosmrs::proto::cosmos::auth::v1beta1::BaseAccount;
 use cosmrs::proto::cosmos::base::tendermint::v1beta1::AbciQueryResponse;
 use cosmrs::proto::prost::Message;
 use cosmrs::rpc::HttpClient;
+use cosmrs::tendermint::abci::Event;
 use cosmrs::{
     proto::cosmwasm::wasm::v1::MsgExecuteContract,
     rpc::Client,
@@ -71,7 +72,7 @@ use cosmrs::{
     AccountId, Coin,
 };
 use cosmrs::{Any, Gas};
-
+use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 
 pub mod compliance;
@@ -92,6 +93,22 @@ pub struct RwaClient {
 struct AccountInfoResponse {
     pub account_number: u64,
     pub sequence: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ExecuteResponse {
+    /// The transaction hash
+    pub tx_hash: String,
+    /// The response data from the contract execution
+    pub data: Vec<u8>,
+    /// Gas used by the transaction
+    pub gas_used: i64,
+    /// Gas wanted/requested for the transaction
+    pub gas_wanted: i64,
+    /// Events emitted during execution
+    pub events: Vec<Event>,
+    /// Height of the block where this transaction was committed
+    pub height: u64,
 }
 
 impl RwaClient {
@@ -152,7 +169,7 @@ impl RwaClient {
         funds: Vec<Coin>,
         signer: &cosmrs::crypto::secp256k1::SigningKey,
         gas_limit: Gas,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    ) -> Result<ExecuteResponse, Box<dyn std::error::Error>> {
         let execute_msg = MsgExecuteContract {
             sender: from.to_string(),
             contract: contract_address,
@@ -193,7 +210,25 @@ impl RwaClient {
 
         let response = self.rpc_client.broadcast_tx_commit(tx_bytes).await?;
 
-        Ok(response.hash.to_string())
+        // Convert events from the response
+        let events: Vec<Event> = response
+            .tx_result
+            .events
+            .into_iter()
+            .map(|evt| Event {
+                kind: evt.kind,
+                attributes: evt.attributes,
+            })
+            .collect();
+
+        Ok(ExecuteResponse {
+            tx_hash: response.hash.to_string(),
+            data: response.tx_result.data.to_vec(),
+            gas_used: response.check_tx.gas_used,
+            gas_wanted: response.tx_result.gas_wanted,
+            events,
+            height: response.height.value(),
+        })
     }
 
     /// Queries a contract without modifying the state.

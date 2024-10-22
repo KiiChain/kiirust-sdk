@@ -6,7 +6,7 @@
 use request::ComplianceModuleRequest;
 use serde::{Deserialize, Serialize};
 
-use crate::RwaClient;
+use crate::{ExecuteResponse, RwaClient};
 
 pub mod request;
 
@@ -20,7 +20,7 @@ impl RwaClient {
         &self,
         module_name: &str,
         request: ComplianceModuleRequest,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    ) -> Result<ExecuteResponse, Box<dyn std::error::Error>> {
         let msg = ExecuteMsg::AddComplianceModule {
             token_address: self.token_address.clone(),
             module_address: request.module_addr,
@@ -46,7 +46,7 @@ impl RwaClient {
     pub async fn remove_compliance_module(
         &self,
         request: ComplianceModuleRequest,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    ) -> Result<ExecuteResponse, Box<dyn std::error::Error>> {
         let msg = ExecuteMsg::RemoveComplianceModule {
             token_address: self.token_address.clone(),
             module_address: request.module_addr,
@@ -73,7 +73,7 @@ impl RwaClient {
         &self,
         request: ComplianceModuleRequest,
         active: bool,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    ) -> Result<ExecuteResponse, Box<dyn std::error::Error>> {
         let msg = ExecuteMsg::UpdateComplianceModule {
             token_address: self.token_address.clone(),
             module_address: request.module_addr,

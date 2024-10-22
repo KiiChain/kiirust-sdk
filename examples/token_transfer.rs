@@ -27,7 +27,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         gas_limit: 5000,
     };
     let transfer_result = client.transfer(transfer_request).await?;
-    println!("Transfer hash: {}", transfer_result);
+    println!("Transfer hash: {}", transfer_result.tx_hash);
 
     // Check balance
     let balance_request = TokenInfoRequest {

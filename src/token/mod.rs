@@ -6,7 +6,7 @@
 pub mod request;
 use request::{TokenInfoRequest, TransferMessageRequest};
 
-use crate::RwaClient;
+use crate::{ExecuteResponse, RwaClient};
 
 impl RwaClient {
     /// Transfers tokens from the sender to a recipient.
@@ -17,11 +17,12 @@ impl RwaClient {
     ///
     /// # Returns
     ///
-    /// A Result containing the transaction hash as a String or an error
+    /// A `ExecuteResponse` containing information about the transaction if successful,
+    /// or an error if the operation fails.
     pub async fn transfer(
         &self,
         request: TransferMessageRequest,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    ) -> Result<ExecuteResponse, Box<dyn std::error::Error>> {
         let msg = cw20::Cw20ExecuteMsg::Transfer {
             recipient: request.to.clone(),
             amount: request.amount.into(),
@@ -46,11 +47,12 @@ impl RwaClient {
     ///
     /// # Returns
     ///
-    /// A Result containing the transaction hash as a String or an error
+    /// A `ExecuteResponse` containing information about the transaction if successful,
+    /// or an error if the operation fails.
     pub async fn transfer_from(
         &self,
         request: TransferMessageRequest,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    ) -> Result<ExecuteResponse, Box<dyn std::error::Error>> {
         let msg = cw20::Cw20ExecuteMsg::TransferFrom {
             owner: request.from.clone(),
             recipient: request.to.clone(),

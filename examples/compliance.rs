@@ -23,7 +23,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let add_result = client
         .add_compliance_module("KYCModule", add_module_request)
         .await?;
-    println!("Add compliance module transaction hash: {}", add_result);
+    println!(
+        "Add compliance module transaction hash: {}",
+        add_result.tx_hash
+    );
 
     // Update a compliance module (set to active)
     let update_module_request = ComplianceModuleRequest {
@@ -37,7 +40,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await?;
     println!(
         "Update compliance module transaction hash: {}",
-        update_result
+        update_result.tx_hash
     );
 
     // Remove a compliance module
@@ -52,7 +55,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await?;
     println!(
         "Remove compliance module transaction hash: {}",
-        remove_result
+        remove_result.tx_hash
     );
 
     Ok(())
