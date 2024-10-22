@@ -10,7 +10,7 @@ use request::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::RwaClient;
+use crate::{ExecuteResponse, RwaClient};
 
 pub mod request;
 
@@ -28,12 +28,12 @@ impl RwaClient {
     ///
     /// # Returns
     ///
-    /// A `Result` containing the transaction hash as a `String` if successful,
+    /// A `ExecuteResponse` containing information about the transaction if successful,
     /// or an error if the operation fails.
     pub async fn add_identity(
         &self,
         request: AddIdentityRequest,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    ) -> Result<ExecuteResponse, Box<dyn std::error::Error>> {
         let msg = ExecuteMsg::AddIdentity {
             country: request.country,
         };
@@ -62,12 +62,12 @@ impl RwaClient {
     ///
     /// # Returns
     ///
-    /// A `Result` containing the transaction hash as a `String` if successful,
+    /// A `ExecuteResponse` containing information about the transaction if successful,
     /// or an error if the operation fails.
     pub async fn update_identity(
         &self,
         request: UpdateIdentityRequest,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    ) -> Result<ExecuteResponse, Box<dyn std::error::Error>> {
         let msg = ExecuteMsg::UpdateCountry {
             new_country: request.new_country,
             identity_owner: request.identity_owner,
@@ -96,12 +96,12 @@ impl RwaClient {
     ///
     /// # Returns
     ///
-    /// A `Result` containing the transaction hash as a `String` if successful,
+    /// A `ExecuteResponse` containing information about the transaction if successful,
     /// or an error if the operation fails.
     pub async fn remove_identity(
         &self,
         request: RemoveIdentityRequest,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    ) -> Result<ExecuteResponse, Box<dyn std::error::Error>> {
         let msg = ExecuteMsg::RemoveIdentity {
             identity_owner: request.identity_owner,
         };
@@ -130,12 +130,12 @@ impl RwaClient {
     ///
     /// # Returns
     ///
-    /// A `Result` containing the transaction hash as a `String` if successful,
+    /// A `ExecuteResponse` containing information about the transaction if successful,
     /// or an error if the operation fails.
     pub async fn add_claim(
         &self,
         request: AddClaimRequest,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    ) -> Result<ExecuteResponse, Box<dyn std::error::Error>> {
         let msg = ExecuteMsg::AddClaim {
             claim: request.claim,
             identity_owner: request.identity_owner,
@@ -165,12 +165,12 @@ impl RwaClient {
     ///
     /// # Returns
     ///
-    /// A `Result` containing the transaction hash as a `String` if successful,
+    /// A `ExecuteResponse` containing information about the transaction if successful,
     /// or an error if the operation fails.
     pub async fn remove_claim(
         &self,
         request: RemoveClaimRequest,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    ) -> Result<ExecuteResponse, Box<dyn std::error::Error>> {
         let msg = ExecuteMsg::RemoveClaim {
             claim_topic: request.claim_topic,
             identity_owner: request.identity_owner,

@@ -28,7 +28,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         gas_limit: 5000,
     };
     let add_result = client.add_identity(add_identity_request).await?;
-    println!("Add identity transaction hash: {}", add_result);
+    println!("Add identity transaction hash: {}", add_result.tx_hash);
 
     // Update an identity
     let update_identity_request = UpdateIdentityRequest {
@@ -39,7 +39,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         gas_limit: 5000,
     };
     let update_result = client.update_identity(update_identity_request).await?;
-    println!("Update identity transaction hash: {}", update_result);
+    println!(
+        "Update identity transaction hash: {}",
+        update_result.tx_hash
+    );
 
     // Add a claim to an identity
     let add_claim_request = AddClaimRequest {
@@ -55,7 +58,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         gas_limit: 5000,
     };
     let add_claim_result = client.add_claim(add_claim_request).await?;
-    println!("Add claim transaction hash: {}", add_claim_result);
+    println!("Add claim transaction hash: {}", add_claim_result.tx_hash);
 
     // Get validated claims for an identity
     let get_claims_request = GetValidatedClaimsRequest {
@@ -73,7 +76,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         gas_limit: 5000,
     };
     let remove_claim_result = client.remove_claim(remove_claim_request).await?;
-    println!("Remove claim transaction hash: {}", remove_claim_result);
+    println!(
+        "Remove claim transaction hash: {}",
+        remove_claim_result.tx_hash
+    );
 
     // Remove an identity
     let remove_identity_request = RemoveIdentityRequest {
@@ -83,7 +89,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         gas_limit: 5000,
     };
     let remove_result = client.remove_identity(remove_identity_request).await?;
-    println!("Remove identity transaction hash: {}", remove_result);
+    println!(
+        "Remove identity transaction hash: {}",
+        remove_result.tx_hash
+    );
 
     // Check token compliance for a user
     let compliance_request = CheckUserForTokenComplianceRequest {
