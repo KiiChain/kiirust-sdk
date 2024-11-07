@@ -1,4 +1,4 @@
-## Kii-Chain RWA SDK
+## KiiChain RWA SDK
 
 The RWA (Real World Asset) SDK is a Rust library for interacting with tokenized
 real-world assets on Cosmos-based blockchains. It provides functionality for
