@@ -4,18 +4,18 @@ use erc3643sdk::{compliance::request::ComplianceModuleRequest, RwaClient};
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = RwaClient::new(
-        "rpc_url",
-        "chain_id",
-        "token_address",
-        "identity_address",
-        "compliance_address",
-        "sei",
+        "https://rpc.kiivalidator.com",
+        "kiichain_1783-1",
+        "kii1token...",
+        "kii1identity...",
+        "kii1compliance...",
+        "akii",
         10,
     )?;
 
     // Add a compliance module
     let add_module_request = ComplianceModuleRequest {
-        from: "cosmos1sender...".to_string(),
+        from: "kii1sender...".to_string(),
         module_addr: "kyc_module_addr...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
         gas_limit: 5000,
@@ -30,8 +30,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Update a compliance module (set to active)
     let update_module_request = ComplianceModuleRequest {
-        from: "cosmos1sender...".to_string(),
-        module_addr: "cosmos1module...".to_string(),
+        from: "kii1sender...".to_string(),
+        module_addr: "kii1module...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
         gas_limit: 5000,
     };
@@ -45,8 +45,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Remove a compliance module
     let remove_module_request = ComplianceModuleRequest {
-        from: "cosmos1sender...".to_string(),
-        module_addr: "cosmos1module...".to_string(),
+        from: "kii1sender...".to_string(),
+        module_addr: "kii1module...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
         gas_limit: 5000,
     };

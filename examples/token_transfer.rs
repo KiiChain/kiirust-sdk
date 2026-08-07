@@ -7,12 +7,12 @@ use erc3643sdk::{
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = RwaClient::new(
-        "rpc_url",
-        "chain_id",
-        "token_address",
-        "identity_address",
-        "compliance_address",
-        "sei",
+        "https://rpc.kiivalidator.com",
+        "kiichain_1783-1",
+        "kii1token...",
+        "kii1identity...",
+        "kii1compliance...",
+        "akii",
         10,
     )?;
 
@@ -20,8 +20,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Perform a token transfer
     let transfer_request = TransferMessageRequest {
-        from: "cosmos1sender...".to_string(),
-        to: "cosmos1recipient...".to_string(),
+        from: "kii1sender...".to_string(),
+        to: "kii1recipient...".to_string(),
         amount: 100,
         signer: signer,
         gas_limit: 5000,
@@ -31,7 +31,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Check balance
     let balance_request = TokenInfoRequest {
-        address: "cosmos1sender...".to_string(),
+        address: "kii1sender...".to_string(),
     };
     let balance = client.balance(balance_request).await?;
     println!("Balance: {}", balance.balance);

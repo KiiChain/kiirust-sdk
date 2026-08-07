@@ -9,20 +9,20 @@ use erc3643sdk::RwaClient;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Initialize the client
+    // Mainnet — use testnet RPC / oro_1336-1 for Oro
     let client = RwaClient::new(
-        "http://rpc.example.com:26657",
-        "my-chain-id",
-        "cosmos1token...",
-        "cosmos1identity...",
-        "cosmos1compliance...",
-        "sei",
+        "https://rpc.kiivalidator.com",
+        "kiichain_1783-1",
+        "kii1token...",
+        "kii1identity...",
+        "kii1compliance...",
+        "akii",
         10,
     )?;
 
     // Add a new identity
     let add_identity_request = AddIdentityRequest {
-        from: "cosmos1sender...".to_string(),
+        from: "kii1sender...".to_string(),
         country: "US".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
         gas_limit: 5000,
@@ -32,9 +32,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Update an identity
     let update_identity_request = UpdateIdentityRequest {
-        from: "cosmos1sender...".to_string(),
+        from: "kii1sender...".to_string(),
         new_country: "CA".to_string(),
-        identity_owner: "cosmos1owner...".to_string(),
+        identity_owner: "kii1owner...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
         gas_limit: 5000,
     };
@@ -46,14 +46,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Add a claim to an identity
     let add_claim_request = AddClaimRequest {
-        from: "cosmos1issuer...".to_string(),
+        from: "kii1issuer...".to_string(),
         claim: Claim {
             topic: Uint128::new(1),
-            issuer: "cosmos1issuer...".to_string(),
+            issuer: "kii1issuer...".to_string(),
             data: Binary::from(b"claim data"),
             uri: "https://example.com/claim".to_string(),
         },
-        identity_owner: "cosmos1owner...".to_string(),
+        identity_owner: "kii1owner...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
         gas_limit: 5000,
     };
@@ -62,16 +62,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Get validated claims for an identity
     let get_claims_request = GetValidatedClaimsRequest {
-        identity_owner: "cosmos1owner...".to_string(),
+        identity_owner: "kii1owner...".to_string(),
     };
     let claims = client.get_validated_claims(get_claims_request).await?;
     println!("Validated claims: {:?}", claims);
 
     // Remove a claim from an identity
     let remove_claim_request = RemoveClaimRequest {
-        from: "cosmos1issuer...".to_string(),
+        from: "kii1issuer...".to_string(),
         claim_topic: Uint128::new(1),
-        identity_owner: "cosmos1owner...".to_string(),
+        identity_owner: "kii1owner...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
         gas_limit: 5000,
     };
@@ -83,8 +83,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Remove an identity
     let remove_identity_request = RemoveIdentityRequest {
-        from: "cosmos1sender...".to_string(),
-        identity_owner: "cosmos1owner...".to_string(),
+        from: "kii1sender...".to_string(),
+        identity_owner: "kii1owner...".to_string(),
         signer: SigningKey::from_slice(&[/* your private key */])?,
         gas_limit: 5000,
     };
@@ -96,8 +96,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Check token compliance for a user
     let compliance_request = CheckUserForTokenComplianceRequest {
-        token_address: "cosmos1token...".to_string(),
-        from: "cosmos1user...".to_string(),
+        token_address: "kii1token...".to_string(),
+        from: "kii1user...".to_string(),
     };
     let is_compliant = client.check_token_compliance(compliance_request).await?;
     println!("Is user compliant: {}", is_compliant);
