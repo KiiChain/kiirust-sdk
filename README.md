@@ -1,8 +1,20 @@
 ## KiiChain RWA SDK
 
 The RWA (Real World Asset) SDK is a Rust library for interacting with tokenized
-real-world assets on Cosmos-based blockchains. It provides functionality for
-token operations, identity management, and compliance handling.
+real-world assets on Kiichain. It provides functionality for token operations,
+identity management, and compliance handling.
+
+### Networks
+
+| Network | Chain ID | Cosmos RPC | Denom |
+| ------- | -------- | ---------- | ----- |
+| Mainnet | `kiichain_1783-1` | `https://rpc.kiivalidator.com` | `akii` |
+| Testnet Oro | `oro_1336-1` | `https://rpc.uno.sentry.testnet.v3.kiivalidator.com` | `akii` |
+
+Bech32 prefix: `kii`
+
+- Mainnet configs: [KiiChain/mainnets](https://github.com/KiiChain/mainnets/tree/main/kiichain)
+- Testnet configs: [KiiChain/testnets](https://github.com/KiiChain/testnets/tree/main/testnet_oro)
 
 ### Features
 
@@ -19,23 +31,22 @@ use cosmrs::crypto::secp256k1::SigningKey;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Initialize the client
+    // Mainnet — use testnet RPC / oro_1336-1 for Oro
     let client = RwaClient::new(
-        "http://rpc.example.com:26657",
-        "my-chain-id",
-        "cosmos1token...",
-        "cosmos1identity...",
-        "cosmos1compliance...",
-        "sei",
-        "gas_price"
-
+        "https://rpc.kiivalidator.com",
+        "kiichain_1783-1",
+        "kii1token...",
+        "kii1identity...",
+        "kii1compliance...",
+        "akii",
+        10 // gas_price
     )?;
 
     // Perform a token transfer
     let signer = SigningKey::from_slice(&[/* your private key */])?;
     let transfer_result = client.transfer(TransferMessageRequest {
-        from: "cosmos1sender...".to_string(),
-        to: "cosmos1recipient...".to_string(),
+        from: "kii1sender...".to_string(),
+        to: "kii1recipient...".to_string(),
         amount: 100,
         signer,
         gas_limit
@@ -44,7 +55,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Check a balance
     let balance = client.balance(TokenInfoRequest {
-        address: "cosmos1address...".to_string(),
+        address: "kii1address...".to_string(),
     }).await?;
     println!("Balance: {}", balance.balance);
 

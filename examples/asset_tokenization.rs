@@ -114,7 +114,7 @@ impl AssetTokenization {
         // Set up country restriction module for geographic compliance
         let cr_module_request = ComplianceModuleRequest {
             from: self.issuer_address.clone(),
-            module_addr: "cosmos1cr...".to_string(),
+            module_addr: "kii1cr...".to_string(),
             signer: SigningKey::from_slice(&[/* your private key */])?,
             gas_limit: 10,
         };
@@ -188,7 +188,7 @@ impl AssetTokenization {
     ) -> Result<String, Box<dyn std::error::Error>> {
         // Verify investor's compliance status
         let compliance_check = CheckUserForTokenComplianceRequest {
-            token_address: "cosmos1token...".to_string(),
+            token_address: "kii1token...".to_string(),
             from: investor_address.to_string(),
         };
 
@@ -232,7 +232,7 @@ impl AssetTokenization {
 
         // Verify current compliance status
         let compliance_check = CheckUserForTokenComplianceRequest {
-            token_address: "cosmos1token...".to_string(),
+            token_address: "kii1token...".to_string(),
             from: investor_address.to_string(),
         };
         let is_compliant = self.client.check_token_compliance(compliance_check).await?;
