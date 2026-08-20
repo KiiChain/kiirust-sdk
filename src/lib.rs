@@ -27,7 +27,7 @@
 //!         "kii1identity...",
 //!         "kii1compliance...",
 //!         "akii",
-//!         10
+//!         10 // gas_price
 //!
 //!     )?;
 //!
